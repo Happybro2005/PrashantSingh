@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Birthday Celebration Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <style>
+        /* Reset and base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #d0e2ff);
+            color: #1e293b;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Container for centering content */
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        /* Access Form */
+        #access-form {
+            max-width: 400px;
+            width: 100%;
+            background: #ffffffcc;
+            backdrop-filter: saturate(180%) blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 24px 36px rgba(33, 56, 135, 0.15);
+            padding: 36px 32px 44px;
+            user-select: none;
+        }
+
+        #access-form h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            color: #3b82f6;
+        }
+        #access-form p {
+            font-weight: 500;
+            margin-bottom: 32px;
+            color: #64748b;
+        }
+
+        #name-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.125rem;
+            border: 2px solid #93c5fd;
+            border-radius: 12px;
+            transition: border-color 0.3s ease;
+        }
+        #name-input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        #submit-btn {
+            margin-top: 32px;
+            width: 100%;
+            padding: 16px 0;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        #submit-btn:hover, #submit-btn:focus {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            outline: none;
+        }
+
+        #error-msg {
+            margin-top: 20px;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        /* Birthday Celebration Container (hidden initially) */
+        #birthday-celebration {
+            display: none;
+            width: 100%;
+            max-width: 960px;
+            position: relative;
+            min-height: 600px;
+            padding: 32px 20px 80px;
+        }
+
+        /* 3D Cake Container */
+        #cake-container {
+            perspective: 1000px;
+            position: relative;
+            margin: 0 auto;
+            width: 300px;
+            height: 300px;
+        }
+
+        #cake {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 20px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: cakePopUp 1.2s forwards ease-out 0.5s;
+        }
+
+        @keyframes cakePopUp {
+            0% {
+                transform: translateY(100px) rotateX(0deg);
+            }
+            100% {
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        /* Cake Layers */
+        .cake-layer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .layer1 { background: #fbbf24; top: 0; }
+        .layer2 { background: #facc15; top: 50px; }
+        .layer3 { background: #f87171; top: 100px; }
+
+        /* Candles */
+        #candles {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .candle {
+            width: 14px;
+            height: 50px;
+            background: linear-gradient(180deg, #f87171, #b91c1c);
+            border-radius: 6px 6px 2px 2px;
+            position: relative;
+            filter: drop-shadow(0 1px 1px rgba(255, 99, 99, 0.4));
+            animation: flicker 1.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes flicker {
+            0% {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 0.7;
+                transform: translateY(-2px);
+            }
+            100% {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+        }
+
+        /* Balloons container */
+        #balloons {
+            position: absolute;
+            bottom: 220px;
+            left: 50%;
+            width: 100%;
+            max-width: 960px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .balloon {
+            position: absolute;
+            bottom: -180px;
+            width: 56px;
+            height: 80px;
+            border-radius: 60% 60% 50% 50% / 80% 80% 60% 60%;
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.6);
+            filter: drop-shadow(0 6px 12px rgba(219, 39, 119, 0.3));
+            animation: floatUp ease-in infinite;
+            transform-origin: bottom center;
+        }
+
+        .balloon::before {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            width: 6px;
+            height: 24px;
+            background: #db2777;
+            border-radius: 2px;
+            transform: translateX(-50%);
+        }
+        .balloon::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 10px;
+            height: 8px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            background: #ec4899;
+            transform: translateX(-50%);
+        }
+
+        /* Different balloon colors and horizontal positions */
+        .balloon.color1 { background: linear-gradient(135deg, #8b5cf6, #3b82f6); }
+        .balloon.color2 { background: linear-gradient(135deg, #fb7185, #dc2626); }
+        .balloon.color3 { background: linear-gradient(135deg, #fbbf24, #b45309); }
+
+        /* Balloon float animation with vertical and drift movement */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        /* Birthday slash animation */
+        #birthday-slash {
+            pointer-events: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            overflow: visible;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        /* Slashes - color bars with width growing and disappearing */
+        .slash {
+            position: absolute;
+            bottom: 0;
+            width: 16px;
+            height: 120px;
+            background: linear-gradient(45deg, #facc15, #f43f5e);
+            border-radius: 6px;
+            opacity: 0;
+            transform-origin: bottom center;
+            animation: slashRise 1.2s forwards ease-in-out;
+        }
+        .slash:nth-child(1) {
+            left: 40%;
+            animation-delay: 0s;
+            background: linear-gradient(45deg, #f43f5e, #ec4899);
+        }
+        .slash:nth-child(2) {
+            left: 48%;
+            animation-delay: 0.3s;
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+        }
+        .slash:nth-child(3) {
+            left: 56%;
+            animation-delay: 0.6s;
+            background: linear-gradient(45deg, #10b981, #34d399);
+        }
+
+        @keyframes slashRise {
+            0% {
+                opacity: 0;
+                height: 0;
+                transform: scaleY(0);
+            }
+            50% {
+                opacity: 1;
+                height: 120px;
+                transform: scaleY(1);
+            }
+            100% {
+                opacity: 0;
+                height: 0;
+                transform: scaleY(0);
+            }
+        }
+
+        /* Header text on birthday page */
+        #birthday-celebration h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #2563eb;
+            text-shadow: 0 1px 10px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #birthday-celebration {
+                min-height: 500px;
+                padding: 24px 16px 70px;
+            }
+            #cake {
+                width: 220px;
+            }
+            #birthday-celebration h1 {
+                font-size: 2.25rem;
+            }
+            #candles {
+                gap: 8px;
+            }
+            .balloon {
+                width: 44px;
+                height: 64px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main id="app" role="main" aria-label="Please Enter Your Name">
+        <section id="access-form" aria-label="User  access form">
+            <h1>Please Enter Your Name</h1>
+            <p>Please enter your name to gain access and celebrate!</p>
+            <input
+                id="name-input"
+                type="text"
+                placeholder="Enter your name"
+                aria-label="Name input"
+                autocomplete="off"
+                spellcheck="false"
+                required
+            />
+            <button id="submit-btn" aria-label="Submit name to access celebration">Enter</button>
+            <div id="error-msg" role="alert" aria-live="assertive"></div>
+        </section>
+
+        <section id="birthday-celebration" aria-label="Birthday celebration animations">
+            <h1>Happy Birthday Abhijeet Bhaiji!</h1>
+            <div id="balloons" aria-hidden="true" aria-label="Floating balloons"></div>
+            <div id="birthday-slash" aria-hidden="true" aria-label="Birthday slash animations">
+                <div class="slash"></div>
+                <div class="slash"></div>
+                <div class="slash"></div>
+            </div>
+            <div id="cake-container" aria-label="Birthday cake with flickering candles">
+                <div id="cake" role="img" aria-roledescription="birthday cake">
+                    <div class="cake-layer layer1"></div>
+                    <div class="cake-layer layer2"></div>
+                    <div class="cake-layer layer3"></div>
+                    <div id="candles" aria-hidden="true">
+                        <div class="candle"></div>
+                        <div class="candle"></div>
+                        <div class="candle"></div>
+                        <div class="candle"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const submitBtn = document.getElementById('submit-btn');
+            const nameInput = document.getElementById('name-input');
+            const errorMsg = document.getElementById('error-msg');
+            const accessForm = document.getElementById('access-form');
+            const celebrationSection = document.getElementById('birthday-celebration');
+            const balloonsContainer = document.getElementById('balloons');
+
+            // Balloon generation parameters
+            const balloonColors = ['color1', 'color2', 'color3'];
+            const balloonCount = 12;
+
+            // Function to create and animate balloons upward with random properties
+            function createBalloons() {
+                balloonsContainer.innerHTML = '';
+                for(let i = 0; i < balloonCount; i++) {
+                    const balloon = document.createElement('div');
+                    balloon.classList.add('balloon');
+                    // Assign color randomly
+                    balloon.classList.add(balloonColors[i % balloonColors.length]);
+                    // Random horizontal position %
+                    const leftPerc = Math.random() * 80 + 10; // between 10% to 90%
+                    balloon.style.left = `${leftPerc}%`;
+                    // Random animation duration 8-14 seconds
+                    const dur = 8 + Math.random() * 6;
+                    balloon.style.animationDuration = `${dur}s`;
+                    // Random animation delay to stagger entrance
+                    balloon.style.animationDelay = `${-dur * Math.random()}s`;
+                    // Random horizontal drifting animation - We will add slight sway
+                    const sway = 10 + Math.random() * 10;
+                    balloon.style.setProperty('--sway-distance', `${sway}px`);
+                    balloonsContainer.appendChild(balloon);
+                }
+            }
+
+            // Input validation and access control
+            function checkAccess() {
+                const nameVal = nameInput.value.trim().toLowerCase();
+                if (!nameVal) {
+                    errorMsg.textContent = 'Please enter your name.';
+                    return;
+                }
+                if (nameVal !== 'abhijeet' && nameVal !== 'abhijeet bhiya') {
+                    errorMsg.textContent = 'Access denied. Name does not match.';
+                    return;
+                }
+                errorMsg.textContent = '';
+                grantAccess();
+            }
+
+            // Show birthday animations on access granted
+            function grantAccess() {
+                accessForm.style.display = 'none';
+                celebrationSection.style.display = 'block';
+                createBalloons();
+            }
+
+            submitBtn.addEventListener('click', () => {
+                checkAccess();
+            });
+
+            nameInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkAccess();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
